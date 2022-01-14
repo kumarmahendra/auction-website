@@ -78,11 +78,17 @@ This project is a rewrite of a previous monolithic auction website I wrote. The 
 
 ## 🚀 Local Development
 
+Tested for:
+
+minikube version: v1.24.0
+commit: 76b94fb3c4e8ac5062daf70d60cf03ddcc0a741b
+
+Docker version 20.10.12, build e91ed57
 
 ### Clone the respository locally
 
 ```bash
-git clone https://github.com/jarrodmalkovic/auction-website.git
+git clone https://github.com/Scytalelabs-official/auction-website
 ```
 
 ### Edit your hosts file
@@ -91,13 +97,26 @@ git clone https://github.com/jarrodmalkovic/auction-website.git
 127.0.0.1 auctionweb.site
 ```
 
-### Install ingress-nginx
+### Install ingress-nginx for bare metal
+
+The link for cloud depoyment would be different. In case of switching you would need to delete your minikube cluster and start fresh to avoid a lot of pain.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.44.0/deploy/static/provider/cloud/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/baremetal/deploy.yaml
 ```
 
 ### Create the required kubernetes secrets
+
+You can use the secret.bash script to generate all secrets at once. Using the same <secret key>
+
+- Running the script
+
+```bash
+chmod +x secret.bash
+./secret.bash <secret_key>
+```
+
+#### Alternatively run all the commands separately to generate the required artifacts
 
 - Create the JWT_KEY secret
 
@@ -149,12 +168,18 @@ kubectl create secret generic cloudinary-api-secret-secret --from-literal=CLOUDI
 
 ### Start skaffold
 
-```basb
+```bash
 skaffold dev
 ```
 
+### Forward port for the ingress
+
+```bash
+kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80
+```
+
 ### Open the project in your browser
-- The project will now be available locally on the domain auctionweb.site in your browser. If you are using Google Chrome you may have to type "thisisunsafe" while on the page to bypass a security warning
+- The project will now be available locally on the domain auctionweb.site:8080 in your browser. If you are using Google Chrome you may have to type "thisisunsafe" while on the page to bypass a security warning
 
 ## ⚖️ License
 
